@@ -30,7 +30,10 @@ namespace WpfApp2
         private DispatcherTimer timer;
         private Canvas canvas;
         private TranslateTransform transform = new TranslateTransform();
-
+        double altoPantalla;
+        double anchoPantalla;
+        private
+            double posX = 0;
 
         int score;
         int ballX;
@@ -42,7 +45,7 @@ namespace WpfApp2
         public MainWindow()
         {
             InitializeComponent();
-
+            WindowState = WindowState.Maximized;
             setupGame();
         }
 
@@ -55,9 +58,12 @@ namespace WpfApp2
             ballY = 0;
             playerSpeed = 0;
 
-            canvas = new Canvas();
-            Canvas.SetTop(gridJuego, gridJuego.Height);
-            Canvas.SetRight(gridJuego,gridJuego.Width);
+            anchoPantalla = SystemParameters.PrimaryScreenWidth;
+            altoPantalla = SystemParameters.PrimaryScreenHeight;
+
+            // Establecer el tamaño del Canvas basado en el ancho y alto de la pantalla
+            CanvasJuego.Width = anchoPantalla;
+            CanvasJuego.Height = altoPantalla;
       
             for (int i = 0; i < rect.Length; i++)
             {
@@ -80,42 +86,53 @@ namespace WpfApp2
         private void Timer_Tick(object sender, EventArgs e)
         {
             double nuevaPosicion = 0, limiteIzquierdo = 0, limiteDerecho = 0;
-            
+            bool eslimiteDerecho = false,eslimiteIzquierdo = false;
             label.Content = goLeft;
             Rectangle s = (Rectangle)FindName("plataforma");
             transform = s.RenderTransform as TranslateTransform;
+            Canvas.SetLeft(s, anchoPantalla / 2 - s.Width / 2);
+            Canvas.SetTop(s, altoPantalla / 2 - s.Height / 2);
             limiteIzquierdo = 0;
-            limiteDerecho = this.ActualWidth - s.Width;
+            limiteDerecho = CanvasJuego.ActualWidth - s.Width;
+            Canvas.SetLeft(s, posX);
+            double posicionX = Canvas.GetLeft(s);
             double posicionPlataforma = Canvas.GetLeft(s); // Obtener la posición actual de la plataforma
-            txtScore.Content = " ";
-
-            if (posicionPlataforma < limiteIzquierdo)
+            txtScore.Content = Canvas.GetLeft(s)+" limite: "+limiteDerecho;
+            if (Canvas.GetLeft(s) < limiteIzquierdo)
             {
-
+                eslimiteIzquierdo = true;
                 // La plataforma ha excedido el límite izquierdo
                 // Realiza las acciones necesarias, como ajustar la posición
                 txtScore.Content = " aaaaaaaa";
 
             }
-            else if (posicionPlataforma > limiteDerecho)
+            else
             {
+                eslimiteIzquierdo = false;
+            }
+
+            if (Canvas.GetLeft(s) > limiteDerecho)
+            {
+                eslimiteDerecho = true;
                 // La plataforma ha excedido el límite derecho
                 // Realiza las acciones necesarias, como ajustar la posición
                 txtScore.Content = " bbbbbbbbbb";
             }
+            else
+            {
+                eslimiteDerecho = false;
+            }
 
 
             // Actualizar la posición de la plataforma
-            if (goLeft)
+            if (goLeft && !eslimiteIzquierdo)
             {
-                
-                
-                transform.X -= 0.2;
+
+                posX -= 0.5;
             }
-            if (goRight)
+            if (goRight && !eslimiteDerecho)
             {
-                
-                transform.X += 0.2;
+                posX += 0.5;
             }
         }
 
@@ -133,9 +150,15 @@ namespace WpfApp2
             if (e.Key == Key.Left)
             {
                 goLeft = false;
-                Console.WriteLine(goLeft);
             }
             else if (e.Key == Key.Right) { goRight = false; }
+        }
+
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            CanvasJuego.Width = e.NewSize.Width;
+            CanvasJuego.Height = e.NewSize.Height;
+
         }
     }
 }

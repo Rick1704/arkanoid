@@ -7,10 +7,12 @@
         PreviewKeyUp="Grid_KeyUp"
         xmlns:local="clr-namespace:WpfApp2"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800"
+        SizeChanged="Window_SizeChanged">
     <Grid Name="gridJuego">
-        <Canvas Name="CanvasJuego">
-            <Label x:Name="txtScore" Content="Puntuacion:0" HorizontalAlignment="Left" Margin="26,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.713,0.015" Width="118"/>
+        <Canvas Name="CanvasJuego" Background="AliceBlue" Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window}}" 
+           Height="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Window}}">
+            <Label x:Name="txtScore" Content="Puntuacion:0" HorizontalAlignment="Left" Margin="26,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.713,0.015" Width="218"/>
             <Rectangle Name="plataforma" HorizontalAlignment="Center" Height="16" Margin="0,392,0,0" Stroke="Green" VerticalAlignment="Top" Width="132">
                 <Rectangle.RenderTransform>
                     <TranslateTransform X="0" Y="0" />
