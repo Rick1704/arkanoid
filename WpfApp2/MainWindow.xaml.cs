@@ -79,19 +79,36 @@ namespace WpfApp2
 
         private void Timer_Tick(object sender, EventArgs e)
         {
+            double nuevaPosicion = 0, limiteIzquierdo = 0, limiteDerecho = 0;
+            
             label.Content = goLeft;
             Rectangle s = (Rectangle)FindName("plataforma");
             transform = s.RenderTransform as TranslateTransform;
-            Point punto = s.TranslatePoint(new Point(transform.X,transform.Y), gridJuego);
-            double limite = punto.X - gridJuego.ActualWidth;
+            limiteIzquierdo = 0;
+            limiteDerecho = this.ActualWidth - s.Width;
+            Canvas.SetLeft(s, limiteIzquierdo);
+            Canvas.SetRight(s,limiteDerecho);
+            string s2 = s.PointToScreen(new Point(transform.X,transform.Y)).X.ToString();
+            txtScore.Content = s2;
+            if (nuevaPosicion < limiteIzquierdo)
+            {
+                nuevaPosicion = limiteIzquierdo;
+            }
+            else if (nuevaPosicion > limiteDerecho)
+            {
+                nuevaPosicion = limiteDerecho;
+            }
+
+            // Actualizar la posición de la plataforma
             if (goLeft)
             {
-                string s2 = limite.ToString();
-                txtScore.Content = s2;
+                
+                
                 transform.X -= 0.2;
             }
             if (goRight)
             {
+                
                 transform.X += 0.2;
             }
         }
