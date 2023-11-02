@@ -28,6 +28,8 @@ namespace WpfApp2
         bool goRight;
         bool isGameOver;
         private DispatcherTimer timer;
+        private Canvas canvas;
+        private TranslateTransform transform = new TranslateTransform();
 
 
         int score;
@@ -53,8 +55,10 @@ namespace WpfApp2
             ballY = 0;
             playerSpeed = 0;
 
-            string s = "score" + score;
-            txtScore.Content = s;
+            canvas = new Canvas();
+            Canvas.SetTop(gridJuego, gridJuego.Height);
+            Canvas.SetRight(gridJuego,gridJuego.Width);
+      
             for (int i = 0; i < rect.Length; i++)
             {
                 rect[i] = (Rectangle)FindName("bloque" + (i + 1));
@@ -64,7 +68,7 @@ namespace WpfApp2
 
             // Inicializa el temporizador con un intervalo de 1 segundo (1000 milisegundos)
             timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(1);
+            timer.Interval = TimeSpan.FromSeconds(0);
 
             // Define un controlador de eventos para el evento Tick del temporizador
             timer.Tick += Timer_Tick;
@@ -77,8 +81,18 @@ namespace WpfApp2
         {
             label.Content = goLeft;
             Rectangle s = (Rectangle)FindName("plataforma");
+            transform = s.RenderTransform as TranslateTransform;
+            Point punto = s.TranslatePoint(new Point(transform.X,transform.Y), gridJuego);
+            double limite = punto.X - gridJuego.ActualWidth;
             if (goLeft)
             {
+                string s2 = limite.ToString();
+                txtScore.Content = s2;
+                transform.X -= 0.2;
+            }
+            if (goRight)
+            {
+                transform.X += 0.2;
             }
         }
 
@@ -87,7 +101,6 @@ namespace WpfApp2
             if (e.Key == Key.Left)
             {
                 goLeft = true;
-                Console.WriteLine(goLeft);
             }
             else if (e.Key == Key.Right) { goRight = true; }
         }
