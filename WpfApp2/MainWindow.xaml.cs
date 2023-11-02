@@ -86,18 +86,24 @@ namespace WpfApp2
             transform = s.RenderTransform as TranslateTransform;
             limiteIzquierdo = 0;
             limiteDerecho = this.ActualWidth - s.Width;
-            Canvas.SetLeft(s, limiteIzquierdo);
-            Canvas.SetRight(s,limiteDerecho);
-            string s2 = s.PointToScreen(new Point(transform.X,transform.Y)).X.ToString();
-            txtScore.Content = s2;
-            if (nuevaPosicion < limiteIzquierdo)
+            double posicionPlataforma = Canvas.GetLeft(s); // Obtener la posición actual de la plataforma
+            txtScore.Content = " ";
+
+            if (posicionPlataforma < limiteIzquierdo)
             {
-                nuevaPosicion = limiteIzquierdo;
+
+                // La plataforma ha excedido el límite izquierdo
+                // Realiza las acciones necesarias, como ajustar la posición
+                txtScore.Content = " aaaaaaaa";
+
             }
-            else if (nuevaPosicion > limiteDerecho)
+            else if (posicionPlataforma > limiteDerecho)
             {
-                nuevaPosicion = limiteDerecho;
+                // La plataforma ha excedido el límite derecho
+                // Realiza las acciones necesarias, como ajustar la posición
+                txtScore.Content = " bbbbbbbbbb";
             }
+
 
             // Actualizar la posición de la plataforma
             if (goLeft)
