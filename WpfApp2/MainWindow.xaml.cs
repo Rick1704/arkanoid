@@ -34,7 +34,7 @@ namespace WpfApp2
         double anchoPantalla;
         private
             double posX = 0;
-
+        Rectangle s;
         int score;
         int ballX;
         int ballY;
@@ -88,7 +88,7 @@ namespace WpfApp2
             double nuevaPosicion = 0, limiteIzquierdo = 0, limiteDerecho = 0;
             bool eslimiteDerecho = false,eslimiteIzquierdo = false;
             label.Content = goLeft;
-            Rectangle s = (Rectangle)FindName("plataforma");
+            s = (Rectangle)FindName("plataforma");
             transform = s.RenderTransform as TranslateTransform;
             Canvas.SetLeft(s, anchoPantalla / 2 - s.Width / 2);
             Canvas.SetTop(s, altoPantalla / 2 - s.Height / 2);
