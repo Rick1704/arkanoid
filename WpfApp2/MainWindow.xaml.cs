@@ -25,7 +25,7 @@ namespace WpfApp2
     public partial class MainWindow : Window
     {
         bool goLeft;
-        bool goRight;
+        bool goRight, colision_muro = false;
         bool isGameOver;
         private DispatcherTimer timer;
         private Canvas canvas;
@@ -33,7 +33,7 @@ namespace WpfApp2
         private TranslateTransform transform2 = new TranslateTransform();
         private double pos;
         double altoPantalla;
-        double anchoPantalla;
+        double anchoPantalla, velocidad = 2;
         private
             double posX = 0;
         private double Hspeed = 0;
@@ -89,10 +89,10 @@ namespace WpfApp2
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            double nuevaPosicion = 0, limiteIzquierdo = 0, limiteDerecho = 0,velocidad = 2;
-            bool eslimiteDerecho = false,eslimiteIzquierdo = false,colision_muro = false;
+            double nuevaPosicion = 0, limiteIzquierdo = 0, limiteDerecho = 0;
+            bool eslimiteDerecho = false,eslimiteIzquierdo = false;
             label.Content = goLeft;
-            Canvas.SetTop(ball, pos);
+            Canvas.SetTop(ball, pos += velocidad);
             s = (Rectangle)FindName("plataforma");
             transform = s.RenderTransform as TranslateTransform;
             transform2 = ball.RenderTransform as TranslateTransform;
@@ -104,23 +104,16 @@ namespace WpfApp2
             double posicionX = Canvas.GetLeft(s);
             double posicionPlataforma = Canvas.GetLeft(s); // Obtener la posición actual de la plataforma
             Canvas.GetTop(s);
-
-            if (colision_muro)
-            {
-                pos -= velocidad;
-            }
-            else
-            {
-                pos += velocidad;
-            }
+            txtScore.Content = colision_muro;
             
             if (Canvas.GetTop(ball)+ball.Height>= (Math.Abs(CanvasJuego.Height-ball.Height)))
             {
-                colision_muro = true;
-            }
-            if (Canvas.GetTop(ball) <= 0)
-            {
-                colision_muro=false;
+                
+                if (!colision_muro)
+                {
+                    velocidad = -velocidad;
+                    colision_muro = true;
+                }
             }
             
 
