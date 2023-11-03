@@ -30,10 +30,14 @@ namespace WpfApp2
         private DispatcherTimer timer;
         private Canvas canvas;
         private TranslateTransform transform = new TranslateTransform();
+        private TranslateTransform transform2 = new TranslateTransform();
+        private double pos;
         double altoPantalla;
         double anchoPantalla;
         private
             double posX = 0;
+        private double Hspeed = 0;
+        private double Vspeed = 0;    
         Rectangle s;
         int score;
         int ballX;
@@ -45,7 +49,7 @@ namespace WpfApp2
         public MainWindow()
         {
             InitializeComponent();
-            WindowState = WindowState.Maximized;
+            WindowState = WindowState.Normal;
             setupGame();
         }
 
@@ -64,7 +68,9 @@ namespace WpfApp2
             // Establecer el tamaño del Canvas basado en el ancho y alto de la pantalla
             CanvasJuego.Width = anchoPantalla;
             CanvasJuego.Height = altoPantalla;
-      
+
+            pos = Canvas.GetTop(ball);
+
             for (int i = 0; i < rect.Length; i++)
             {
                 rect[i] = (Rectangle)FindName("bloque" + (i + 1));
@@ -74,9 +80,7 @@ namespace WpfApp2
 
             // Inicializa el temporizador con un intervalo de 1 segundo (1000 milisegundos)
             timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(0);
-
-            // Define un controlador de eventos para el evento Tick del temporizador
+            timer.Interval = TimeSpan.FromMilliseconds(1); // Intervalo para aproximadamente 60 FPS
             timer.Tick += Timer_Tick;
 
             // Inicia el temporizador
@@ -85,11 +89,13 @@ namespace WpfApp2
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            double nuevaPosicion = 0, limiteIzquierdo = 0, limiteDerecho = 0;
-            bool eslimiteDerecho = false,eslimiteIzquierdo = false;
+            double nuevaPosicion = 0, limiteIzquierdo = 0, limiteDerecho = 0,velocidad = 2;
+            bool eslimiteDerecho = false,eslimiteIzquierdo = false,colision_muro = false;
             label.Content = goLeft;
+            Canvas.SetTop(ball, pos);
             s = (Rectangle)FindName("plataforma");
             transform = s.RenderTransform as TranslateTransform;
+            transform2 = ball.RenderTransform as TranslateTransform;
             Canvas.SetLeft(s, anchoPantalla / 2 - s.Width / 2);
             Canvas.SetTop(s, altoPantalla / 2 - s.Height / 2);
             limiteIzquierdo = 0;
@@ -97,13 +103,33 @@ namespace WpfApp2
             Canvas.SetLeft(s, posX);
             double posicionX = Canvas.GetLeft(s);
             double posicionPlataforma = Canvas.GetLeft(s); // Obtener la posición actual de la plataforma
-            txtScore.Content = Canvas.GetLeft(s)+" limite: "+limiteDerecho;
+            Canvas.GetTop(s);
+
+            if (colision_muro)
+            {
+                pos -= velocidad;
+            }
+            else
+            {
+                pos += velocidad;
+            }
+            
+            if (Canvas.GetTop(ball)+ball.Height>= (Math.Abs(CanvasJuego.Height-ball.Height)))
+            {
+                colision_muro = true;
+            }
+            if (Canvas.GetTop(ball) <= 0)
+            {
+                colision_muro=false;
+            }
+            
+
             if (Canvas.GetLeft(s) < limiteIzquierdo)
             {
                 eslimiteIzquierdo = true;
                 // La plataforma ha excedido el límite izquierdo
                 // Realiza las acciones necesarias, como ajustar la posición
-                txtScore.Content = " aaaaaaaa";
+               
 
             }
             else
@@ -116,7 +142,7 @@ namespace WpfApp2
                 eslimiteDerecho = true;
                 // La plataforma ha excedido el límite derecho
                 // Realiza las acciones necesarias, como ajustar la posición
-                txtScore.Content = " bbbbbbbbbb";
+              
             }
             else
             {
@@ -128,11 +154,11 @@ namespace WpfApp2
             if (goLeft && !eslimiteIzquierdo)
             {
 
-                posX -= 0.5;
+                posX -= 4;
             }
             if (goRight && !eslimiteDerecho)
             {
-                posX += 0.5;
+                posX += 4;
             }
         }
 
